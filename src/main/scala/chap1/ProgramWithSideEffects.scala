@@ -1,7 +1,5 @@
 package chap1
 
-import chap1.ProgramWithSideEffects.MyExperiment.Coffees
-
 object ProgramWithSideEffects {
 
   object Cafe {
@@ -77,102 +75,102 @@ object ProgramWithSideEffects {
 
   }
 
-  object MyExperiment {
+//  object MyExperiment {
+//
+//    trait Functor[F[_]] {
+//      def map[A, B](fa: F[A])(f: A => B): F[B]
+//    }
+//
+//    object Functor {
+//      def apply[F[_]: Functor]: Functor[F] = implicitly
+//    }
+//
+//    implicit class FunctorSyntax[F[_]: Functor, A](self: F[A]) {
+//      def map[B](f: A => B): F[B] = Functor[F].map(self)(f)
+//    }
+//
+//    trait Applicative[F[_]] extends Functor[F] {
+//      def pure[A](a: A): F[A]
+//    }
+//
+//    object Applicative {
+//      def apply[F[_]: Applicative]: Applicative[F] = implicitly
+//    }
+//
+//    implicit class ApplicativeSyntax[A](self: A) {
+//      def pure[F[_]: Applicative]: F[A] = Applicative[F].pure(self)
+//    }
+//
+//    implicit class MonadSyntax[F[_]: Monad, A](self: F[A]) {
+//      def flatMap[B](f: A => F[B]): F[B] = Monad[F].flatMap(self)(f)
+//    }
+//
+//    trait Monad[F[_]] extends Applicative[F] {
+//      def flatMap[A, B](fa: F[A])(f: A => F[B]): F[B]
+//    }
+//
+//    object Monad {
+//      def apply[F[_]: Monad]: Monad[F] = implicitly
+//    }
+//
+//    trait CreditCard
+//    final case class Charge(creditCard: CreditCard, price: BigDecimal)
+//    final case class Coffee(price: BigDecimal)
+//
+//    // algebra
+//    trait Coffees[F[_]] {
+//      def buy(creditCard: CreditCard): F[(Charge, CreditCard)]
+//      def buyMany(creditCard: CreditCard, n: Int): F[(List[Charge], CreditCard)]
+//    }
+//
+//    object Coffees {
+//      def apply[F[_]: Coffees]: Coffees[F] = implicitly
+//
+//      def of[F[_]: Monad]: Coffees[F] = new Coffees[F] {
+//        override def buy(creditCard: CreditCard): F[(Charge, CreditCard)] = {
+//          for {
+//            coffee <- Coffee(100).pure[F]
+//          } yield Charge(creditCard, coffee.price)
+//        }
+//
+//        override def buyMany(creditCard: CreditCard, n: Int): F[(List[Charge], CreditCard)] = {
+//          for {
+//            purchases <- List.fill(n)(buy(creditCard)).pure[F]
+//            // here it needs Traverse because it's List[F[(Charge, CreditCard)]
+//            // and we want F[List[(Charge, CreditCard)]]
+//            // so it's kinda overkill :D but was fun to try out
+//            // after we use Traverse we can do what we did on line 66-68 but in F[_] way
+//          } yield ???
+//        }
+//      }
+//
+//    }
+//
+//    final case class IO[A](unsafeRun: () => A) {
+//      def map[B](f: A => B): IO[B] = IO.delay(f(unsafeRun()))
+//
+//      def flatMap[B](f: A => IO[B]): IO[B] = f(unsafeRun())
+//    }
+//
+//    object IO {
+//      def delay[A](a: => A): IO[A] = new IO[A](() => a)
+//      def pure[A](a: A): IO[A] = delay(a)
+//    }
+//
+//    implicit object IOMonad extends Monad[IO] {
+//      override def flatMap[A, B](fa: IO[A])(f: A => IO[B]): IO[B] = fa.flatMap(f)
+//      override def pure[A](a: A): IO[A] = IO.pure(a)
+//      override def map[A, B](fa: IO[A])(f: A => B): IO[B] = fa.map(f)
+//    }
+//
+//  }
 
-    trait Functor[F[_]] {
-      def map[A, B](fa: F[A])(f: A => B): F[B]
-    }
-
-    object Functor {
-      def apply[F[_]: Functor]: Functor[F] = implicitly
-    }
-
-    implicit class FunctorSyntax[F[_]: Functor, A](self: F[A]) {
-      def map[B](f: A => B): F[B] = Functor[F].map(self)(f)
-    }
-
-    trait Applicative[F[_]] extends Functor[F] {
-      def pure[A](a: A): F[A]
-    }
-
-    object Applicative {
-      def apply[F[_]: Applicative]: Applicative[F] = implicitly
-    }
-
-    implicit class ApplicativeSyntax[A](self: A) {
-      def pure[F[_]: Applicative]: F[A] = Applicative[F].pure(self)
-    }
-
-    implicit class MonadSyntax[F[_]: Monad, A](self: F[A]) {
-      def flatMap[B](f: A => F[B]): F[B] = Monad[F].flatMap(self)(f)
-    }
-
-    trait Monad[F[_]] extends Applicative[F] {
-      def flatMap[A, B](fa: F[A])(f: A => F[B]): F[B]
-    }
-
-    object Monad {
-      def apply[F[_]: Monad]: Monad[F] = implicitly
-    }
-
-    trait CreditCard
-    final case class Charge(creditCard: CreditCard, price: BigDecimal)
-    final case class Coffee(price: BigDecimal)
-
-    // algebra
-    trait Coffees[F[_]] {
-      def buy(creditCard: CreditCard): F[(Charge, CreditCard)]
-      def buyMany(creditCard: CreditCard, n: Int): F[(List[Charge], CreditCard)]
-    }
-
-    object Coffees {
-      def apply[F[_]: Coffees]: Coffees[F] = implicitly
-
-      def of[F[_]: Monad]: Coffees[F] = new Coffees[F] {
-        override def buy(creditCard: CreditCard): F[(Charge, CreditCard)] = {
-          for {
-            coffee <- Coffee(100).pure[F]
-          } yield Charge(creditCard, coffee.price)
-        }
-
-        override def buyMany(creditCard: CreditCard, n: Int): F[(List[Charge], CreditCard)] = {
-          for {
-            purchases <- List.fill(n)(buy(creditCard)).pure[F]
-            // here it needs Traverse because it's List[F[(Charge, CreditCard)]
-            // and we want F[List[(Charge, CreditCard)]]
-            // so it's kinda overkill :D but was fun to try out
-            // after we use Traverse we can do what we did on line 66-68 but in F[_] way
-          } yield ???
-        }
-      }
-
-    }
-
-    final case class IO[A](unsafeRun: () => A) {
-      def map[B](f: A => B): IO[B] = IO.delay(f(unsafeRun()))
-
-      def flatMap[B](f: A => IO[B]): IO[B] = f(unsafeRun())
-    }
-
-    object IO {
-      def delay[A](a: => A): IO[A] = new IO[A](() => a)
-      def pure[A](a: A): IO[A] = delay(a)
-    }
-
-    implicit object IOMonad extends Monad[IO] {
-      override def flatMap[A, B](fa: IO[A])(f: A => IO[B]): IO[B] = fa.flatMap(f)
-      override def pure[A](a: A): IO[A] = IO.pure(a)
-      override def map[A, B](fa: IO[A])(f: A => B): IO[B] = fa.map(f)
-    }
-
-  }
-
-  import MyExperiment._
+//  import MyExperiment._
 
   def main(args: Array[String]): Unit = {
 
-    val io = Coffees.of[IO].buy(new CreditCard {})
-    println(io.unsafeRun())
+//    val io = Coffees.of[IO].buy(new CreditCard {})
+//    println(io.unsafeRun())
   }
 
 }
